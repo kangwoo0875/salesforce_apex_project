@@ -1,61 +1,59 @@
-My Salesforce Apex Project
 # Enterprise Lead Scoring Engine
 
-A robust, metadata-driven Salesforce Lead Scoring solution designed for scalability and maintainability. This project demonstrates enterprise-level Apex patterns including **Trigger Frameworks**, **Batch Processing**, **Selector Patterns**, and **Metadata-Driven Architecture**.
+Salesforceのリードスコアリング機能を拡張したプロジェクトです。スケーラビリティとメンテナンス性を重視して設計しました。Trigger FrameworkやBatch処理、Selectorパターン、メタデータ駆動アーキテクチャなど、エンタープライズ開発でよく使われる実践的なパターンを取り入れています。
 
 ## Key Features
 
 ### 1. Metadata-Driven Architecture
-- **No Hardcoding**: Scoring rules are managed via **Custom Metadata Types** (`LeadScoringRule__mdt`), allowing admins to modify logic without code deployment.
-- **Flexible Operations**: Supports dynamic comparison operations (`Equals`, `NotEquals`, `Contains`).
+- **No Hardcoding**: スコアリングのルールは *LeadScoringRule__mdt* (カスタムメタデータ) で管理するようにしました。これで、コードを修正しなくても管理者が自由にロジックを変更できます。
+- **Flexible Operations**: *Equals* や *Contains* など、状況に合わせて柔軟な比較ができるようにしています。
 
 ### 2. Real-Time & Batch Processing
-- **Trigger Automation**: Automatically calculates scores on Lead creation and update.
-- **Batch Processing**: Includes a Batch Apex class (`LeadScoringBatch`) to recalculate scores for millions of existing records when rules change.
-- **Dynamic SOQL**: The batch class intelligently queries only the fields required by active rules to optimize heap size and query performance.
+- **Trigger Automation**: リードが作成されたり更新されたりしたタイミングで、自動的にスコアを計算します。
+- **Batch Processing**: ルールが変わった時に備えて、過去のデータを一括で再計算できるバッチクラス *LeadScoringBatch* も用意しました。
+- **Dynamic SOQL**: バッチ処理では、必要なフィールドだけを動的にクエリするようにして、パフォーマンスを最適化しています。
 
 ### 3. Enterprise Patterns & Testing
-- **Trigger Handler Pattern**: Logic is decoupled from the Trigger for better separation of concerns.
-- **Selector Pattern**: Uses a virtual `LeadScoringRuleSelector` to abstract database queries.
-- **Mocking in Tests**: Achieves **100% logic coverage** by mocking Custom Metadata records in unit tests, overcoming the limitation of not being able to insert metadata during tests.
+- **Trigger Handler Pattern**: ロジックをTriggerから切り離して、コードがごちゃごちゃにならないように整理しました。
+- **Selector Pattern**: データベースへのクエリ部分を *LeadScoringRuleSelector* として独立させています。
+- **Mocking in Tests**: テストコードでは、実際にメタデータを登録する代わりにモック（ダミーデータ）を使うことで、ロジックのテストカバレッジ100%を達成しました。
 
-## 🛠 Technical Architecture
+## Technical Architecture
 
 ### Data Model
-- **Lead**: Added `Score__c` field.
+- **Lead**: *Score__c* というフィールドを追加しました。
 - **LeadScoringRule__mdt**:
-    - `Field__c`: API Name of the field to check.
-    - `Value__c`: Value to compare.
-    - `Operation__c`: Operator (Equals, Contains, etc.).
-    - `Score__c`: Points to assign.
+    - *Field__c*: チェックする項目のAPI名
+    - *Value__c*: 比較する値
+    - *Operation__c*: 比較方法 (Equals, Containsなど)
+    - *Score__c*: 加算するスコア
 
 ### Class Structure
 | Class | Description |
 |-------|-------------|
-| `LeadScoring` | Core domain logic for calculating scores. |
-| `LeadTriggerHandler` | Orchestrates execution during Trigger events. |
-| `LeadScoringBatch` | Handles bulk updates with dynamic query generation. |
-| `LeadScoringRuleSelector` | Data access layer for Custom Metadata. |
-| `LeadScoringTest` | Comprehensive unit tests with Mock Selector. |
+| LeadScoring | スコア計算のメインロジックを担当します。 |
+| LeadTriggerHandler | Triggerが動いた時の処理を制御します。 |
+| LeadScoringBatch | 大量のデータを一括更新するためのバッチ処理です。 |
+| LeadScoringRuleSelector | カスタムメタデータへのアクセスを担当します。 |
+| LeadScoringTest | テストクラスです。モックを使って効率的にテストします。 |
 
 ## Getting Started
 
 ### 1. Deploy to Org
-Deploy the source code to your Salesforce Developer Org or Scratch Org.
+ソースコードをSalesforce組織にデプロイします。
 ```bash
 sfdx force:source:deploy -p force-app
 ```
 
 ### 2. Configure Rules
-Navigate to **Setup > Custom Metadata Types > Lead Scoring Rule**.
-Create records to define your scoring logic:
-- **Example**: If `Industry` equals `Technology`, add `10` points.
+**Setup > Custom Metadata Types > Lead Scoring Rule** に移動して、ルールを作ってみてください。
+- 例: *Industry* が *Technology* だったら、*10* ポイント追加する、など。
 
 ### 3. Run Tests
-Execute the included test suite to verify logic.
+テストを実行して、ロジックが正しく動くか確認できます。
 ```bash
 sfdx force:apex:test:run -l RunLocalTests -c
 ```
 
 ---
-*This project was built to demonstrate advanced Apex capabilities and best practices.*
+*このプロジェクトは、Apexの応用的な使い方とベストプラクティスをデモするために作りました。*
