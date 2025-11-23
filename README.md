@@ -40,20 +40,14 @@ Salesforceのリードスコアリング機能を拡張したプロジェクト�
 ## Getting Started
 
 ### 1. Deploy to Org
-ソースコードをSalesforce組織にデプロイします。
-```bash
-sfdx force:source:deploy -p force-app
-```
+まずはソースコードをSalesforce組織にデプロイしましょう。ターミナルで *sfdx force:source:deploy -p force-app* コマンドを実行すればOKです。
 
 ### 2. Configure Rules
 **Setup > Custom Metadata Types > Lead Scoring Rule** に移動して、ルールを作ってみてください。
 - 例: *Industry* が *Technology* だったら、*10* ポイント追加する、など。
 
 ### 3. Run Tests
-テストを実行して、ロジックが正しく動くか確認できます。
-```bash
-sfdx force:apex:test:run -l RunLocalTests -c
-```
+最後にテストを実行して、ロジックが正しく動くか確認します。コマンドは *sfdx force:apex:test:run -l RunLocalTests -c* です。
 
 ---
 *このプロジェクトは、Apexの応用的な使い方とベストプラクティスをデモするために作りました。*
